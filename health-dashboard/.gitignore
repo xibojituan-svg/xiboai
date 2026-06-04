@@ -1,0 +1,13 @@
+# 凭据
+.env
+# 机密文档(商业计划书/手册/体检报告)
+*.docx
+*.pdf
+# 健康数据截图
+*.png
+*.jpg
+# 运行产物
+*.log
+__pycache__/
+*.pyc
+.DS_Store
