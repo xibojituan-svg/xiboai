@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代谢主权 · 0→0.1 MVP 小程序原型 V2(CGM 版)</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  :root{
+    --bg:#0B0E14; --card:#161B26; --card2:#1C2330; --line:#262E3D;
+    --txt:#FFFFFF; --txt2:#9AA3B5; --txt3:#5A6373;
+    --acc:#34E5B0; --acc2:#2BA88A; --amber:#F5B544; --red:#FF6B6B; --blue:#5B8DEF;
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(1200px 800px at 50% -10%,#11202a 0%,#0B0E14 55%);
+    color:var(--txt); padding:48px 24px 80px; min-height:100vh;
+  }
+  .head{max-width:1500px;margin:0 auto 40px;text-align:center;}
+  .head h1{font-size:30px;font-weight:800;letter-spacing:.5px;background:linear-gradient(90deg,#fff,#34E5B0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .head .sub{color:var(--txt2);font-size:14px;margin-top:10px;line-height:1.7;}
+  .head .tag{display:inline-block;margin-top:14px;padding:6px 14px;border:1px solid var(--acc2);border-radius:20px;color:var(--acc);font-size:12px;letter-spacing:1px;}
+  .screens{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;max-width:1750px;margin:0 auto;}
+  .col{display:flex;flex-direction:column;align-items:center;width:320px;}
+  .label{color:var(--acc);font-size:13px;font-weight:700;margin-bottom:6px;letter-spacing:1px;}
+  .label .n{color:var(--txt3);font-weight:600;margin-right:6px;}
+  .note{color:var(--txt3);font-size:11.5px;line-height:1.6;margin-bottom:16px;text-align:center;min-height:60px;padding:0 4px;}
+
+  .phone{width:320px;height:690px;background:#000;border-radius:42px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1px #2a3242;position:relative;}
+  .screen{width:100%;height:100%;background:var(--bg);border-radius:32px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#000;border-radius:0 0 16px 16px;z-index:30;}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:13px 22px 4px;font-size:12px;font-weight:600;color:var(--txt);}
+  .body{flex:1;overflow-y:auto;padding:8px 18px 70px;}
+  .body::-webkit-scrollbar{display:none;}
+
+  .tabbar{position:absolute;bottom:0;left:0;right:0;height:62px;background:rgba(13,17,24,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;justify-content:space-around;align-items:center;padding-bottom:6px;z-index:20;}
+  .tab{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--txt3);font-size:9.5px;}
+  .tab.on{color:var(--acc);}
+  .tab .ic{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+
+  .greet{font-size:13px;color:var(--txt2);margin:6px 0 2px;}
+  .greet b{color:var(--txt);}
+  .daystrip{font-size:11px;color:var(--acc);letter-spacing:1px;margin-bottom:14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;}
+  .card.glow{background:linear-gradient(160deg,#16322b,#161B26);border-color:#27604f;}
+
+  .ring-wrap{display:flex;align-items:center;gap:16px;}
+  .ring{position:relative;width:108px;height:108px;flex-shrink:0;}
+  .ring svg{transform:rotate(-90deg);}
+  .ring .ctr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring .ctr .v{font-size:30px;font-weight:800;}
+  .ring .ctr .l{font-size:10px;color:var(--txt2);margin-top:-2px;}
+  .ring-info .t{font-size:13px;color:var(--txt2);}
+  .ring-info .s{font-size:16px;font-weight:700;color:var(--acc);margin:3px 0;}
+  .ring-info .d{font-size:11px;color:var(--txt3);line-height:1.5;}
+
+  .adv{display:flex;gap:11px;}
+  .adv .av{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#2BA88A,#34E5B0);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .adv .nm{font-size:12px;font-weight:700;color:var(--acc);margin-bottom:4px;}
+  .adv .msg{font-size:13px;line-height:1.6;color:#E6EAF2;}
+  .adv .msg em{color:var(--acc);font-style:normal;font-weight:600;}
+
+  .sect{font-size:12px;color:var(--txt3);font-weight:700;letter-spacing:1px;margin:4px 2px 9px;display:flex;justify-content:space-between;align-items:center;}
+  .sect .src{font-size:9.5px;color:var(--acc2);font-weight:600;letter-spacing:0;}
+  .focus{background:linear-gradient(135deg,#1b2433,#161B26);border:1px solid #2c3a4f;border-radius:18px;padding:17px;position:relative;overflow:hidden;}
+  .focus::before{content:"今日唯一";position:absolute;top:13px;right:-26px;background:var(--amber);color:#1a1200;font-size:9px;font-weight:800;padding:3px 30px;transform:rotate(45deg);}
+  .focus .ft{font-size:15px;font-weight:700;margin-bottom:7px;}
+  .focus .fd{font-size:12px;color:var(--txt2);line-height:1.55;margin-bottom:13px;}
+  .focus .btn{background:var(--acc);color:#04130d;border:none;border-radius:11px;padding:11px;width:100%;font-size:13px;font-weight:700;}
+
+  /* CGM live card */
+  .cgm{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:14px;}
+  .cgm .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .cgm .now{font-size:26px;font-weight:800;line-height:1;}
+  .cgm .now small{font-size:12px;color:var(--txt3);font-weight:600;}
+  .cgm .now .arrow{color:var(--acc);font-size:16px;margin-left:4px;}
+  .cgm .sync{text-align:right;font-size:9.5px;color:var(--acc2);}
+  .cgm .sync .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc);margin-right:4px;animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .cgm .tir{font-size:10.5px;color:var(--txt2);margin-top:6px;}
+  .cgm .tir b{color:var(--acc);font-weight:700;}
+
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .m{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;}
+  .m .ml{font-size:10.5px;color:var(--txt2);margin-bottom:6px;}
+  .m .mv{font-size:21px;font-weight:800;}
+  .m .mv small{font-size:11px;font-weight:600;color:var(--txt3);}
+  .m .mc{font-size:10px;font-weight:700;margin-top:3px;}
+  .up{color:var(--acc);} .dn{color:var(--red);} .flat{color:var(--amber);}
+
+  .chat-h{text-align:center;padding:10px 0 4px;border-bottom:1px solid var(--line);margin-bottom:12px;}
+  .chat-h .av{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#2BA88A,#34E5B0);display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 6px;}
+  .chat-h .nm{font-size:14px;font-weight:700;}
+  .chat-h .ro{font-size:10.5px;color:var(--txt2);margin-top:2px;}
+  .bub{max-width:84%;padding:11px 13px;border-radius:15px;font-size:12.5px;line-height:1.6;margin-bottom:11px;}
+  .bub.me{background:var(--card2);margin-left:auto;border-bottom-right-radius:5px;color:#dfe5ef;}
+  .bub.ai{background:linear-gradient(150deg,#16322b,#142b25);border:1px solid #27604f;border-bottom-left-radius:5px;}
+  .bub.ai em{color:var(--acc);font-style:normal;font-weight:600;}
+  .bub .pill{display:inline-block;margin-top:8px;background:rgba(52,229,176,.13);border:1px solid #2c5a4c;color:var(--acc);font-size:10.5px;padding:5px 9px;border-radius:8px;}
+  .bub .glu{display:block;margin-top:8px;font-size:10.5px;color:var(--amber);}
+  .inbar{position:absolute;bottom:70px;left:14px;right:14px;background:var(--card2);border:1px solid var(--line);border-radius:22px;padding:10px 15px;font-size:12px;color:var(--txt3);display:flex;justify-content:space-between;align-items:center;}
+
+  .chartcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;}
+  .chartcard .ch-t{font-size:12px;color:var(--txt2);display:flex;justify-content:space-between;margin-bottom:4px;}
+  .chartcard .ch-v{font-size:22px;font-weight:800;margin-bottom:2px;}
+  .chartcard .ch-d{font-size:11px;color:var(--acc);font-weight:700;margin-bottom:10px;}
+  .xlabels{display:flex;justify-content:space-between;font-size:9px;color:var(--txt3);margin-top:5px;}
+
+  .heat{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;margin:10px 0 6px;}
+  .heat span{aspect-ratio:1;border-radius:3px;background:#202838;}
+  .heat span.l1{background:#1d4a3c;} .heat span.l2{background:#26795f;} .heat span.l3{background:#34E5B0;}
+
+  .hard{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);}
+  .hard:last-child{border-bottom:none;}
+  .hard .hn{font-size:12.5px;font-weight:600;}
+  .hard .hn small{display:block;color:var(--txt3);font-size:10px;font-weight:400;margin-top:1px;}
+  .hard .hcmp{text-align:right;font-size:11px;color:var(--txt3);}
+  .hard .hcmp b{font-size:14px;color:var(--acc);display:block;}
+
+  .calib-h{background:linear-gradient(135deg,#1b2433,#161B26);border:1px solid #2c3a4f;border-radius:18px;padding:16px;margin-bottom:14px;text-align:center;}
+  .calib-h .t{font-size:15px;font-weight:800;}
+  .calib-h .s{font-size:11px;color:var(--txt2);margin-top:4px;}
+  .crow{display:flex;gap:10px;padding:13px;border-radius:14px;margin-bottom:10px;align-items:flex-start;}
+  .crow.good{background:rgba(52,229,176,.08);border:1px solid #235044;}
+  .crow.warn{background:rgba(245,181,68,.08);border:1px solid #5a4a22;}
+  .crow .ci{font-size:17px;flex-shrink:0;}
+  .crow .ct{font-size:12.5px;font-weight:700;margin-bottom:3px;}
+  .crow.good .ct{color:var(--acc);} .crow.warn .ct{color:var(--amber);}
+  .crow .cd{font-size:11px;color:var(--txt2);line-height:1.55;}
+  .nextfocus{background:var(--card);border:1px dashed #34506a;border-radius:14px;padding:14px;text-align:center;}
+  .nextfocus .l{font-size:10px;color:var(--txt3);letter-spacing:1px;}
+  .nextfocus .v{font-size:14px;font-weight:700;margin-top:5px;color:#fff;}
+
+  /* data sources */
+  .ds{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);}
+  .ds:last-child{border-bottom:none;}
+  .ds .di{width:40px;height:40px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+  .ds .dmid{flex:1;}
+  .ds .dn{font-size:13px;font-weight:600;}
+  .ds .dsub{font-size:10.5px;color:var(--txt3);margin-top:2px;}
+  .ds .dstat{font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:8px;}
+  .ds .dstat.on{background:rgba(52,229,176,.13);color:var(--acc);border:1px solid #2c5a4c;}
+  .ds .dstat.off{background:rgba(245,181,68,.1);color:var(--amber);border:1px solid #5a4a22;}
+  .syncbanner{background:linear-gradient(135deg,#16322b,#142b25);border:1px solid #27604f;border-radius:16px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+  .syncbanner .bi{font-size:24px;}
+  .syncbanner .bt{font-size:12.5px;font-weight:700;color:var(--acc);}
+  .syncbanner .bs{font-size:10.5px;color:var(--txt2);margin-top:2px;}
+
+  .footer{max-width:1100px;margin:46px auto 0;color:var(--txt3);font-size:12px;line-height:1.85;border-top:1px solid var(--line);padding-top:24px;}
+  .footer b{color:var(--acc);}
+  .footer h3{color:#fff;font-size:15px;margin-bottom:10px;}
+  .footer .gg{display:grid;grid-template-columns:1fr 1fr;gap:8px 30px;}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>代谢主权 · 0→0.1 MVP · V2(CGM 版)</h1>
+  <div class="sub">个性化健康顾问 · 长期陪伴 + 双层及时反馈 · 面向高压中年管理者的代谢健康<br>载体:微信小程序 · CGM 采集外包给厂商 App,经<b style="color:#34E5B0">糖动 API</b> 同步,小程序只做数据消费 + 归因 + 陪伴</div>
+  <div class="tag">2 人团队 · 微信小程序 · 糖动 CGM 数据流 · 10-20 名种子 · 8 周</div>
+</div>
+
+<div class="screens">
+
+  <!-- ===== 屏 1 今日 ===== -->
+  <div class="col">
+    <div class="label"><span class="n">01</span>今日 · 主屏</div>
+    <div class="note">实时血糖卡片来自糖动 CGM 同步——把"看不见的代谢"变成实时可见。今日只给一个关键动作,对抗高自律人群信息过载。</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>● ● ● 100%</span></div>
+      <div class="body">
+        <div class="greet">早,<b>蒋德铭</b></div>
+        <div class="daystrip">代谢主权 · 第 12 天 · 上升中 ↗</div>
+
+        <div class="card glow">
+          <div class="ring-wrap">
+            <div class="ring">
+              <svg width="108" height="108">
+                <circle cx="54" cy="54" r="46" stroke="#222c3a" stroke-width="9" fill="none"/>
+                <circle cx="54" cy="54" r="46" stroke="#34E5B0" stroke-width="9" fill="none"
+                  stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="81"/>
+              </svg>
+              <div class="ctr"><div class="v">72</div><div class="l">代谢状态</div></div>
+            </div>
+            <div class="ring-info">
+              <div class="t">较上周</div>
+              <div class="s">+8 分 ↗</div>
+              <div class="d">血糖波动趋稳<br>内脏脂肪下降中</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CGM live -->
+        <div class="cgm">
+          <div class="top">
+            <div>
+              <div class="now">5.8<small> mmol/L</small><span class="arrow">→</span></div>
+            </div>
+            <div class="sync"><span class="dot"></span>糖动实时同步<br>硅基 · 剩 9 天</div>
+          </div>
+          <svg width="100%" height="56" viewBox="0 0 280 56" preserveAspectRatio="none">
+            <rect x="0" y="14" width="280" height="26" fill="#34E5B0" opacity="0.08"/>
+            <path d="M0,34 C20,33 30,20 45,18 C60,16 70,30 90,32 C110,34 120,12 140,10 C160,8 170,28 190,30 C210,32 220,24 240,26 C260,28 270,30 280,30"
+              fill="none" stroke="#34E5B0" stroke-width="2.2" stroke-linejoin="round"/>
+          </svg>
+          <div class="xlabels"><span>6:00</span><span>早餐</span><span>午餐</span><span>现在</span></div>
+          <div class="tir">今日葡萄糖目标范围内时间(TIR) <b>88%</b> · 餐后峰值已收窄</div>
+        </div>
+
+        <div class="card">
+          <div class="adv">
+            <div class="av">◆</div>
+            <div>
+              <div class="nm">健康参谋</div>
+              <div class="msg">昨晚血糖比前天平稳,睡眠也够了。<em>今天别加练</em>——训练量已够,问题不在练,在饭后那杯奶茶。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sect">今日聚焦</div>
+        <div class="focus">
+          <div class="ft">午餐:先吃菜和蛋白,主食最后</div>
+          <div class="fd">同样一顿饭,换个顺序,餐后血糖峰值能压低 30%。这是今天唯一要做对的事。</div>
+          <button class="btn">✓ 我做到了 · 打卡</button>
+        </div>
+
+        <div class="sect" style="margin-top:6px;">高频信号</div>
+        <div class="grid4">
+          <div class="m"><div class="ml">体重</div><div class="mv">81.2<small>kg</small></div><div class="mc up">-2.6kg ↓ 12天</div></div>
+          <div class="m"><div class="ml">腰围</div><div class="mv">92<small>cm</small></div><div class="mc up">-3cm ↓</div></div>
+          <div class="m"><div class="ml">晨起能量</div><div class="mv">7.5<small>/10</small></div><div class="mc up">回升 ↗</div></div>
+          <div class="m"><div class="ml">血糖 TIR</div><div class="mv">88<small>%</small></div><div class="mc up">↑ 较上周+12</div></div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab on"><div class="ic">◉</div>今日</div>
+        <div class="tab"><div class="ic">◆</div>参谋</div>
+        <div class="tab"><div class="ic">📈</div>趋势</div>
+        <div class="tab"><div class="ic">🔗</div>数据</div>
+        <div class="tab"><div class="ic">☰</div>我的</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== 屏 2 参谋 ===== -->
+  <div class="col">
+    <div class="label"><span class="n">02</span>健康参谋 · 归因+校准</div>
+    <div class="note">参谋的归因基于真实 CGM 数据:把血糖波动关联到具体那顿饭/那次熬夜。这是 AI 不可替代的价值,也是闭环最难的一环。</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>● ● ● 100%</span></div>
+      <div class="body">
+        <div class="chat-h">
+          <div class="av">◆</div>
+          <div class="nm">健康参谋</div>
+          <div class="ro">你的私人代谢参谋 · 读得懂你的血糖 · 循证</div>
+        </div>
+
+        <div class="bub me">早上就喝了杯燕麦拿铁,怎么没精神?</div>
+        <div class="bub ai">我看了你的血糖——<em>那杯燕麦拿铁把你血糖拉到 9.8,然后 1 小时内快速回落</em>,这个"过山车"正是你犯困的原因。
+          <span class="glu">📈 CGM:7:20 燕麦拿铁 → 峰值 9.8 mmol/L</span>
+          <span class="pill">明天换成:鸡蛋+无糖咖啡,我们对比看曲线</span>
+        </div>
+
+        <div class="bub me">我这周练了4次,怎么体重没怎么动?</div>
+        <div class="bub ai">你的努力没白费,但<em>方向偏了一点</em>。问题不在练,在睡——连续 3 天睡眠不足 6h,皮质醇升高让内脏脂肪更难掉。
+          <span class="pill">本周校准:训练降到 3 次,精力还给睡眠</span>
+        </div>
+
+        <div class="bub ai">这正是和你以前自己管的区别:<em>不是让你更拼,是让你拼对地方。</em></div>
+      </div>
+      <div class="inbar"><span>和参谋说点什么…</span><span style="color:var(--acc);">🎤 ↑</span></div>
+      <div class="tabbar">
+        <div class="tab"><div class="ic">◉</div>今日</div>
+        <div class="tab on"><div class="ic">◆</div>参谋</div>
+        <div class="tab"><div class="ic">📈</div>趋势</div>
+        <div class="tab"><div class="ic">🔗</div>数据</div>
+        <div class="tab"><div class="ic">☰</div>我的</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== 屏 3 趋势 ===== -->
+  <div class="col">
+    <div class="label"><span class="n">03</span>趋势 · 双层反馈</div>
+    <div class="note">高频层=CGM当日血糖曲线+体重(每日可见,维持循环);硬指标层=8周体检对比(证明真效果)。反馈机制=护城河。</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>● ● ● 100%</span></div>
+      <div class="body">
+        <div class="sect" style="margin-top:4px;">高频 · 今日血糖曲线<span class="src">⟲ 糖动 CGM</span></div>
+        <div class="chartcard">
+          <div class="ch-t"><span>葡萄糖目标范围内时间 TIR</span><span>目标 3.9-7.8</span></div>
+          <div class="ch-v">88%</div>
+          <div class="ch-d">餐后峰值较第1周下降 1.9 mmol/L ↓</div>
+          <svg width="100%" height="70" viewBox="0 0 280 70" preserveAspectRatio="none">
+            <rect x="0" y="20" width="280" height="32" fill="#34E5B0" opacity="0.08"/>
+            <path d="M0,44 C18,43 28,26 44,24 C62,22 72,40 92,42 C112,44 122,16 142,14 C162,12 172,38 192,40 C212,42 222,32 242,34 C262,36 272,40 280,40"
+              fill="none" stroke="#34E5B0" stroke-width="2.2"/>
+          </svg>
+          <div class="xlabels"><span>0:00</span><span>早</span><span>午</span><span>晚</span><span>24:00</span></div>
+        </div>
+
+        <div class="sect">高频 · 体重趋势(12天)</div>
+        <div class="chartcard">
+          <div class="ch-v">81.2 kg <span style="font-size:12px;color:var(--acc);">-2.6kg ↓</span></div>
+          <svg width="100%" height="58" viewBox="0 0 280 58" preserveAspectRatio="none">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#34E5B0" stop-opacity=".3"/>
+              <stop offset="1" stop-color="#34E5B0" stop-opacity="0"/>
+            </linearGradient></defs>
+            <path d="M0,8 L40,13 L80,11 L120,22 L160,28 L200,36 L240,44 L280,48 L280,58 L0,58 Z" fill="url(#g1)"/>
+            <path d="M0,8 L40,13 L80,11 L120,22 L160,28 L200,36 L240,44 L280,48" fill="none" stroke="#34E5B0" stroke-width="2.5"/>
+          </svg>
+        </div>
+
+        <div class="sect">依从性 · 连续打卡</div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;">
+            <div style="font-size:21px;font-weight:800;">11<small style="font-size:12px;color:var(--txt3);font-weight:600;"> / 12 天</small></div>
+            <div style="font-size:11px;color:var(--acc);font-weight:700;">依从率 92%</div>
+          </div>
+          <div class="heat">
+            <span class="l3"></span><span class="l3"></span><span class="l2"></span><span class="l3"></span>
+            <span class="l3"></span><span class="l1"></span><span class="l3"></span><span class="l3"></span>
+            <span class="l3"></span><span class="l2"></span><span class="l3"></span><span class="l3"></span>
+            <span></span><span></span>
+          </div>
+        </div>
+
+        <div class="sect">硬指标 · 8周首次复检<span class="src">抽血</span></div>
+        <div class="card">
+          <div class="hard"><div class="hn">HOMA-IR<small>胰岛素抵抗指数</small></div><div class="hcmp">2.9 → <b>1.8</b></div></div>
+          <div class="hard"><div class="hn">ApoB<small>心血管核心风险</small></div><div class="hcmp">1.18 → <b>0.98 g/L</b></div></div>
+          <div class="hard"><div class="hn">肝脏脂肪<small>脂肪肝程度</small></div><div class="hcmp">中度 → <b>轻度</b></div></div>
+          <div class="hard"><div class="hn">甘油三酯<small></small></div><div class="hcmp">2.4 → <b>1.5</b></div></div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ic">◉</div>今日</div>
+        <div class="tab"><div class="ic">◆</div>参谋</div>
+        <div class="tab on"><div class="ic">📈</div>趋势</div>
+        <div class="tab"><div class="ic">🔗</div>数据</div>
+        <div class="tab"><div class="ic">☰</div>我的</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== 屏 4 周报 ===== -->
+  <div class="col">
+    <div class="label"><span class="n">04</span>周报 · 方向校准</div>
+    <div class="note">每周一份「方向校准报告」——不是督促你更努力,是告诉你努力对不对。这是续费理由,也是 0→0.1 的价值锚。</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>● ● ● 100%</span></div>
+      <div class="body">
+        <div class="calib-h" style="margin-top:4px;">
+          <div class="t">本周方向校准报告</div>
+          <div class="s">第 2 周 · 5/26 - 6/01</div>
+        </div>
+
+        <div class="sect">你做对了什么</div>
+        <div class="crow good">
+          <div class="ci">✓</div>
+          <div><div class="ct">饮食顺序改对了</div><div class="cd">CGM 显示餐后血糖峰值平均下降 28%,这是体重下降的主因。继续保持。</div></div>
+        </div>
+        <div class="crow good">
+          <div class="ci">✓</div>
+          <div><div class="ct">打卡依从率 92%</div><div class="cd">你比同期 80% 的种子用户更稳定。习惯正在成形。</div></div>
+        </div>
+
+        <div class="sect">方向偏了什么</div>
+        <div class="crow warn">
+          <div class="ci">!</div>
+          <div><div class="ct">睡眠拖了后腿</div><div class="cd">3 天不足 6h。训练效果被睡眠不足抵消了一半——下周唯一要修的点。</div></div>
+        </div>
+
+        <div class="sect">下周聚焦</div>
+        <div class="nextfocus">
+          <div class="l">ONE THING</div>
+          <div class="v">23:30 前放下手机,保睡眠 ≥ 7h</div>
+        </div>
+
+        <div class="card" style="margin-top:14px;background:linear-gradient(160deg,#16322b,#161B26);border-color:#27604f;">
+          <div class="adv">
+            <div class="av">◆</div>
+            <div>
+              <div class="nm">参谋寄语</div>
+              <div class="msg">两周,你比 90% 的人都做得好。<em>但真正的对手是你自己的日程。</em>下周我帮你盯睡眠。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ic">◉</div>今日</div>
+        <div class="tab"><div class="ic">◆</div>参谋</div>
+        <div class="tab"><div class="ic">📈</div>趋势</div>
+        <div class="tab"><div class="ic">🔗</div>数据</div>
+        <div class="tab on"><div class="ic">☰</div>我的</div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- ===== 屏 5 数据接入(新增) ===== -->
+  <div class="col">
+    <div class="label"><span class="n">05</span>数据 · 接入中枢(新增)</div>
+    <div class="note">把"采集外包、小程序消费"的架构落到界面:CGM 经糖动同步、体重秤蓝牙、体检报告录入。小程序不自采,只聚合+归因。</div>
+    <div class="phone"><div class="screen">
+      <div class="notch"></div>
+      <div class="statusbar"><span>9:41</span><span>● ● ● 100%</span></div>
+      <div class="body">
+        <div class="sect" style="margin-top:4px;">数据接入</div>
+
+        <div class="syncbanner">
+          <div class="bi">⟲</div>
+          <div>
+            <div class="bt">糖动 CGM 实时同步中</div>
+            <div class="bs">硅基动感传感器 · 剩 9 天 · 最近 3 分钟前更新</div>
+          </div>
+        </div>
+
+        <div class="sect">数据源</div>
+        <div class="card">
+          <div class="ds">
+            <div class="di">🩸</div>
+            <div class="dmid"><div class="dn">CGM 动态血糖</div><div class="dsub">硅基动感 · 经糖动 API</div></div>
+            <div class="dstat on">已连接</div>
+          </div>
+          <div class="ds">
+            <div class="di">⚖️</div>
+            <div class="dmid"><div class="dn">体重 / 体脂秤</div><div class="dsub">蓝牙 BLE · 每日晨称</div></div>
+            <div class="dstat on">已连接</div>
+          </div>
+          <div class="ds">
+            <div class="di">🏃</div>
+            <div class="dmid"><div class="dn">运动 / 睡眠</div><div class="dsub">微信运动 + 手动补录</div></div>
+            <div class="dstat on">已连接</div>
+          </div>
+          <div class="ds">
+            <div class="di">🩺</div>
+            <div class="dmid"><div class="dn">血压</div><div class="dsub">每周手动录入</div></div>
+            <div class="dstat off">待录入</div>
+          </div>
+        </div>
+
+        <div class="sect">体检硬指标 · 录入</div>
+        <div class="card">
+          <div class="ds">
+            <div class="di">📄</div>
+            <div class="dmid"><div class="dn">上传体检报告</div><div class="dsub">拍照 → AI 自动提取关键指标</div></div>
+            <div class="dstat on">＋</div>
+          </div>
+          <div class="ds">
+            <div class="dmid"><div class="dn">HOMA-IR</div><div class="dsub">上次 1.8 · 第8周复检</div></div>
+            <div class="dstat off">下次 W8</div>
+          </div>
+          <div class="ds">
+            <div class="dmid"><div class="dn">ApoB</div><div class="dsub">上次 0.98 g/L</div></div>
+            <div class="dstat off">下次 W8</div>
+          </div>
+        </div>
+
+        <div style="font-size:10.5px;color:var(--txt3);line-height:1.6;padding:4px 4px 0;">
+          小程序不直接采集 CGM(无法后台常驻),由厂商 App 采集 → 糖动 API 同步 → 本程序消费 + 归因。
+        </div>
+      </div>
+      <div class="tabbar">
+        <div class="tab"><div class="ic">◉</div>今日</div>
+        <div class="tab"><div class="ic">◆</div>参谋</div>
+        <div class="tab"><div class="ic">📈</div>趋势</div>
+        <div class="tab on"><div class="ic">🔗</div>数据</div>
+        <div class="tab"><div class="ic">☰</div>我的</div>
+      </div>
+    </div></div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <h3>V2 相比 V1 的关键升级 · CGM 数据流落地</h3>
+  <div class="gg">
+    <div><b>① 今日</b> — 新增实时血糖 CGM 卡片(糖动同步 + TIR 葡萄糖目标范围内时间),把"看不见的代谢"变成实时可见。</div>
+    <div><b>② 参谋</b> — 归因升级为基于真实 CGM:"那杯燕麦拿铁把血糖拉到 9.8" — 个性化归因是 AI 不可替代的价值。</div>
+    <div><b>③ 趋势</b> — 高频层首位换成 CGM 当日血糖曲线 + 体重;硬指标加 HOMA-IR(胰岛素抵抗核心)。</div>
+    <div><b>④ 周报</b> — 校准报告引用 CGM 证据("餐后峰值下降 28%"),让"做对了什么"有硬数据支撑。</div>
+    <div style="grid-column:1/3;"><b>⑤ 数据接入(新屏)</b> — 落实架构:CGM 经糖动 API、体重秤蓝牙、体检报告 AI 提取。<b>小程序不自采,只聚合+归因</b>——化解"为CGM做APP"的伪命题。</div>
+  </div>
+  <h3 style="margin-top:22px;">2 人团队的最小实现边界(0→0.1)</h3>
+  <div style="line-height:1.9;">
+    · <b>能做</b>:小程序(5屏)+ 糖动 API 对接(1次商务+技术)+ 大模型参谋(API+你的校准话术SOP)+ 你本人每周复盘兜底。<br>
+    · <b>暂不做</b>:自研CGM/可穿戴采集、家庭账户、声音简报、真人医学IP — 全留 0.1→1。<br>
+    · <b>死盯两个数</b>:<b>8周行为依从率 ≥60%</b> + <b>≥60%用户 HOMA-IR/肝脂肪/ApoB 改善</b>。<br>
+    · <b>规模化接口</b>:你的陪伴话术 → AI SOP;经家庭账户延展到配偶(围绝经/女性灯塔),双灯塔自然合流。
+  </div>
+</div>
+
+</body>
+</html>

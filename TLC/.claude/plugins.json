@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "lastUpdated": 1765922808957,
+  "plugins": [
+    {
+      "filename": "llms-maintainer.md",
+      "type": "agent",
+      "metadata": {
+        "sourcePath": "agents/ai-specialists/llms-maintainer.md",
+        "filename": "llms-maintainer.md",
+        "name": "llms-maintainer",
+        "description": "LLMs.txt roadmap file generator and maintainer. Use PROACTIVELY after build completion, content changes, or when implementing AEO (AI Engine Optimization). Scans site structure and updates AI crawler navigation.",
+        "tools": [
+          "Read",
+          "Write",
+          "Bash",
+          "Grep",
+          "Glob"
+        ],
+        "category": "ai-specialists",
+        "type": "agent",
+        "size": 3397,
+        "contentHash": "a7b6ef6247c7c8039e44ace6453eed60eceff2126cb58f2a0cb56c0f70893dc6",
+        "installedAt": 1765922808955,
+        "updatedAt": 1765922808955
+      }
+    }
+  ]
+}

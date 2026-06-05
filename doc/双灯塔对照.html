@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>双灯塔战略对照图</title>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #0E1218 0%, #161B23 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: #FFFFFF;
+    padding: 80px 60px 60px;
+  }
+  .mono { font-family: "SF Mono", "JetBrains Mono", monospace; font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 2400px; margin: 0 auto; }
+
+  /* Header band */
+  .top {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+  .pretitle {
+    font-size: 14px; letter-spacing: 6px; color: #6E7A88; font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .title {
+    font-size: 64px; font-weight: 800;
+    background: linear-gradient(135deg, #FFFFFF 0%, #B8C8D8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1.5px;
+    margin-bottom: 18px;
+    line-height: 1.1;
+  }
+  .subtitle {
+    font-size: 22px; color: #8B9CAD; font-weight: 400;
+    line-height: 1.6;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .subtitle b { color: #FFFFFF; font-weight: 600; }
+  .principle {
+    margin-top: 28px;
+    display: inline-block;
+    padding: 14px 32px;
+    background: rgba(63, 217, 194, 0.10);
+    border: 1px solid rgba(63, 217, 194, 0.25);
+    border-radius: 14px;
+    font-size: 17px; color: #3FD9C2; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .principle b { color: #FFFFFF; font-weight: 700; padding: 0 8px; }
+
+  /* Phones row */
+  .phones {
+    display: flex; justify-content: center; gap: 100px;
+    margin-bottom: 60px;
+    align-items: flex-start;
+  }
+  .phone-wrap {
+    flex-shrink: 0;
+    text-align: center;
+  }
+  .phone-label {
+    margin-bottom: 24px;
+  }
+  .pl-tag {
+    display: inline-block;
+    font-size: 13px; font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .pl-tag-warm { background: rgba(200, 132, 123, 0.20); color: #E8A398; }
+  .pl-tag-dark { background: rgba(63, 217, 194, 0.18); color: #3FD9C2; }
+  .pl-name {
+    font-size: 30px; font-weight: 700; color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+  .pl-target {
+    font-size: 14px; color: #8B9CAD;
+  }
+  .phone-img {
+    width: 580px;
+    box-shadow: 0 30px 80px -10px rgba(0,0,0,0.6);
+    border-radius: 56px;
+    display: block;
+  }
+
+  /* Comparison strip */
+  .comparison {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 22px;
+    padding: 40px 50px;
+    margin-bottom: 40px;
+  }
+  .comp-title {
+    font-size: 26px; font-weight: 700; color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+  .comp-sub {
+    font-size: 14px; color: #8B9CAD; margin-bottom: 30px;
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: baseline;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-dim {
+    font-size: 13px; color: #6E7A88; font-weight: 600; letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .comp-warm, .comp-dark {
+    font-size: 17px; line-height: 1.55;
+    padding: 0 24px;
+  }
+  .comp-warm { color: #E8A398; border-left: 3px solid rgba(200, 132, 123, 0.35); }
+  .comp-dark { color: #3FD9C2; border-left: 3px solid rgba(63, 217, 194, 0.35); }
+  .comp-warm b, .comp-dark b { color: #FFFFFF; font-weight: 700; }
+
+  /* Bottom message */
+  .closing {
+    background: linear-gradient(135deg, rgba(200, 132, 123, 0.10) 0%, rgba(63, 217, 194, 0.10) 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 22px;
+    padding: 40px 50px;
+    text-align: center;
+  }
+  .closing-title {
+    font-size: 16px; letter-spacing: 4px; color: #6E7A88; font-weight: 700;
+    margin-bottom: 14px;
+  }
+  .closing-body {
+    font-size: 26px; font-weight: 600; color: #FFFFFF;
+    line-height: 1.55;
+    max-width: 1400px; margin: 0 auto 16px;
+  }
+  .closing-body span.w { color: #E8A398; }
+  .closing-body span.d { color: #3FD9C2; }
+  .closing-foot {
+    font-size: 15px; color: #8B9CAD;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .signature {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 13px; color: #4A5360;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Top -->
+  <div class="top">
+    <div class="pretitle">DUAL LIGHTHOUSE STRATEGY · 蒋德铭 × 老余 · 健康知己</div>
+    <div class="title">双灯塔战略</div>
+    <div class="subtitle">
+      一个数据底座、一个公司、一个品牌——
+      <br><b>两套产品形态、两个 ICP、两种购买的本质</b>。
+    </div>
+    <div class="principle">
+      <b>女性买</b>"被重新讲述的自己"<span style="color:#6E7A88;padding:0 16px;">|</span><b>男性买</b>"被工具放大的自己"
+    </div>
+  </div>
+
+  <!-- Phones -->
+  <div class="phones">
+    <div class="phone-wrap">
+      <div class="phone-label">
+        <div class="pl-tag pl-tag-warm">主灯塔 · 蒋德铭主理</div>
+        <div class="pl-name">围绝经主权</div>
+        <div class="pl-target">35-55 高净值女性 · 围绝经期 · 喜播现成 ICP</div>
+      </div>
+      <img class="phone-img" src="_phone_warm.png" alt="女性灯塔">
+    </div>
+    <div class="phone-wrap">
+      <div class="phone-label">
+        <div class="pl-tag pl-tag-dark">辅灯塔 · 老余主理</div>
+        <div class="pl-name">长寿主权</div>
+        <div class="pl-target">35-55 高净值男企业家 · longevity 优化 · 老余 Patient Zero</div>
+      </div>
+      <img class="phone-img" src="_phone_dark.png" alt="男性灯塔">
+    </div>
+  </div>
+
+  <!-- Comparison strip -->
+  <div class="comparison">
+    <div class="comp-title">产品语言反转 · 13 个维度对照</div>
+    <div class="comp-sub">所有维度都必须不同——因为购买的本质不同。共用同一个数据底座、同一个公司、同一个品牌。</div>
+
+    <div class="comp-row">
+      <div class="comp-dim">购买的本质</div>
+      <div class="comp-warm"><b>身份重构</b> · 我是谁,我在哪一段</div>
+      <div class="comp-dark"><b>能力杠杆</b> · 我能做什么,有多快</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">所处生命阶段</div>
+      <div class="comp-warm">过渡态 · 身体在背叛我,旧叙事崩塌</div>
+      <div class="comp-dark">稳定态 · 我还行,我想更行</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">视觉主色</div>
+      <div class="comp-warm">暖陶土 + 奶油色 · 温度 / 穿越</div>
+      <div class="comp-dark">深海军色 + 青蓝 · 精密 / 仪器</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">英雄区</div>
+      <div class="comp-warm">医学 IP <b>真人头像 + 3 分钟音频</b></div>
+      <div class="comp-dark"><b>生物年龄 46.2</b> + 90 天趋势</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">状态命名</div>
+      <div class="comp-warm">围绝经活跃期 · 第 23 天</div>
+      <div class="comp-dark">协议 Day 23 / 90 · 顾问 陈博士</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">主要维度</div>
+      <div class="comp-warm">四维 · 雌激素 / 睡眠 / 情绪 / 代谢</div>
+      <div class="comp-dark">五维风险百分位 + Top 12 指标网格</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">今日动作</div>
+      <div class="comp-warm"><b>1 件事</b> + 医学 IP 第一人称 + 陪你 7 天</div>
+      <div class="comp-dark"><b>3 条编号协议</b> + 数据依据 + checkbox</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">第二信任锚</div>
+      <div class="comp-warm">同行人时刻 · 入 20 人小群</div>
+      <div class="comp-dark">5 年生物年龄轨迹图 · 过去 vs 未来</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">续费机制</div>
+      <div class="comp-warm">同行人会员(年费 2-5w) + 仪式</div>
+      <div class="comp-dark">季度 1on1 复盘(年费 5-15w) + 协议</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">主导反馈货币</div>
+      <div class="comp-warm">关系 + 认同 + 安全感</div>
+      <div class="comp-dark">进步 + 认知 + 成就</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">底部 TAB</div>
+      <div class="comp-warm">健康 / 节律 / 故事 / 档案</div>
+      <div class="comp-dark">仪表盘 / 协议 / 检测 / 专家网络</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">ARPU × 拉新乘数</div>
+      <div class="comp-warm">中 × <b>1.5-3 倍家庭账户</b>(复利结构)</div>
+      <div class="comp-dark">高 × 1 倍(线性结构)</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-dim">5 年总账户数</div>
+      <div class="comp-warm"><b>5-10w 女性 × 1.5-3 家庭 = 8-30w 总账户</b></div>
+      <div class="comp-dark">2-5k 男企业家 × 1 = 2-5k 总账户</div>
+    </div>
+  </div>
+
+  <!-- Closing -->
+  <div class="closing">
+    <div class="closing-title">CORE STRATEGIC INSTRUCTION</div>
+    <div class="closing-body">
+      <span class="w">女性灯塔每个区块说"我陪你"</span>。
+      <br><span class="d">男性灯塔每个区块说"数据证明你在变强"</span>。
+    </div>
+    <div class="closing-foot">
+      这两件事差的不是 UI,是产品的灵魂。<br>
+      共用底座 + 形态反转 = 双灯塔战略的所有要点。
+    </div>
+  </div>
+
+  <div class="signature">
+    呈送:老余 · 撰写:蒋德铭 / 喜播教育总经理 · 2026 年 5 月
+  </div>
+
+</div>
+</body>
+</html>

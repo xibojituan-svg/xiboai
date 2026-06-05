@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>围绝经主权 · 首屏原型 V1</title>
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, #F5F2EF 0%, #EDE7E2 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+    color: #2C2622;
+    padding: 60px 80px;
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  /* ───────── Phone frame ───────── */
+  .phone {
+    width: 412px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, #FDF7F2 0%, #F9EBE2 40%, #F5DDD2 100%);
+    border-radius: 54px;
+    position: relative;
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.08),
+      0 40px 80px -20px rgba(70, 40, 30, 0.25),
+      0 0 0 12px #1A1A1A,
+      0 0 0 14px #2A2A2A;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* iPhone status bar */
+  .status-bar {
+    padding: 16px 36px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+  .status-icons { display: flex; gap: 5px; align-items: center; }
+  .status-icons svg { display: block; }
+
+  /* Dynamic island */
+  .island {
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 120px; height: 36px;
+    background: #000;
+    border-radius: 22px;
+    z-index: 10;
+  }
+
+  /* Top header */
+  .header {
+    padding: 18px 22px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; font-size: 17px; color: #2C2622;
+  }
+  .brand-dot {
+    width: 26px; height: 26px;
+    background: linear-gradient(135deg, #C8847B 0%, #A45F58 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 13px;
+  }
+  .bell {
+    width: 36px; height: 36px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #6E5A52;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  /* Card base */
+  .card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(14px);
+    border-radius: 22px;
+    margin: 12px 18px;
+    padding: 18px 18px;
+    box-shadow: 0 2px 10px rgba(70, 40, 30, 0.04);
+  }
+
+  /* B · Audio briefing */
+  .briefing {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF6F0 100%);
+    padding: 20px 20px 18px;
+    margin: 14px 18px 16px;
+    border-radius: 24px;
+    box-shadow: 0 4px 16px rgba(168, 95, 88, 0.10);
+    position: relative;
+  }
+  .briefing-row {
+    display: flex; gap: 14px;
+  }
+  .ip-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(177, 119, 99, 0.25);
+    border: 2px solid white;
+    position: relative;
+    overflow: hidden;
+    background: #F8DCC9;
+  }
+  .ip-avatar svg { display: block; width: 100%; height: 100%; }
+  .ip-placeholder-note {
+    position: absolute;
+    bottom: -3px; left: -3px;
+    background: rgba(44, 38, 34, 0.92);
+    color: #FFD9C8;
+    font-size: 8px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+    border: 1.5px solid white;
+    white-space: nowrap;
+  }
+  .ip-badge {
+    position: absolute; top: -2px; right: -2px;
+    width: 18px; height: 18px;
+    background: #6FAE7E;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 9px;
+  }
+  .ip-meta { flex: 1; min-width: 0; }
+  .ip-title {
+    font-size: 14px; color: #8B6E62; font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .ip-headline {
+    font-size: 16px; color: #2C2622; font-weight: 600;
+    line-height: 1.45; margin-bottom: 2px;
+  }
+  .ip-quote {
+    font-size: 14px; color: #5A4842; line-height: 1.55; margin-top: 4px;
+  }
+  .audio-player {
+    margin-top: 14px;
+    background: #FFEFE5;
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .play-btn {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #C8847B 0%, #A45F58 100%);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: white; box-shadow: 0 3px 8px rgba(168, 95, 88, 0.30);
+  }
+  .audio-wave {
+    flex: 1; display: flex; align-items: center; gap: 2px;
+  }
+  .audio-wave i {
+    display: block; width: 2px; background: #D9A89C; border-radius: 1px;
+  }
+  .audio-time { font-size: 13px; color: #8B6E62; font-weight: 500; }
+
+  /* C · Today's state */
+  .section-label {
+    display: flex; align-items: baseline; gap: 10px;
+    padding: 4px 4px 10px;
+  }
+  .section-title {
+    font-size: 17px; font-weight: 700; color: #2C2622;
+  }
+  .section-sub {
+    font-size: 12px; color: #8B6E62;
+  }
+  .phase-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(200, 132, 123, 0.12);
+    color: #A45F58;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 12px; font-weight: 600;
+  }
+  .phase-pill::before {
+    content: ''; width: 6px; height: 6px;
+    background: #C8847B; border-radius: 50%;
+  }
+
+  .four-dims {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px; margin-bottom: 14px;
+  }
+  .dim-cell {
+    background: rgba(255,255,255,0.7);
+    border-radius: 14px;
+    padding: 12px 8px 10px;
+    text-align: center;
+    border: 1px solid rgba(0,0,0,0.03);
+  }
+  .dim-name {
+    font-size: 13px; color: #5A4842; font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .dim-status {
+    font-size: 11px; font-weight: 600;
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .status-attention { background: #FBE6CF; color: #B5783D; }
+  .status-stable { background: #DEEAE3; color: #5C8270; }
+
+  .attribution {
+    background: #FFF8F2;
+    border-left: 3px solid #C8847B;
+    padding: 11px 14px;
+    border-radius: 4px 12px 12px 4px;
+    font-size: 13.5px; color: #4A3C36;
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+  .attribution::before {
+    content: '“'; color: #C8847B; font-size: 22px; font-weight: 700;
+    margin-right: 2px; line-height: 0; vertical-align: -4px;
+  }
+
+  /* D · Today's one thing */
+  .one-thing {
+    background: linear-gradient(135deg, #FFFFFF 0%, #FFF0E5 100%);
+    border-radius: 22px;
+    margin: 14px 18px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 2px 12px rgba(168, 95, 88, 0.08);
+  }
+  .ot-header {
+    font-size: 12px; color: #A45F58; font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .ot-title {
+    font-size: 22px; font-weight: 700; color: #2C2622;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ot-context {
+    font-size: 13.5px; color: #5A4842;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .ot-context b { color: #A45F58; font-weight: 600; }
+  .ot-cta {
+    background: linear-gradient(135deg, #C8847B 0%, #A45F58 100%);
+    color: white; font-weight: 600;
+    padding: 12px 0;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(168, 95, 88, 0.25);
+  }
+
+  /* E · Peer */
+  .peer-card {
+    background: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    margin: 14px 18px;
+    padding: 14px 16px;
+    box-shadow: 0 2px 8px rgba(70, 40, 30, 0.05);
+  }
+  .peer-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 8px;
+  }
+  .peer-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #B8C8A8 0%, #8FA48A 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 600; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .peer-name { font-weight: 600; font-size: 14px; color: #2C2622; }
+  .peer-meta { font-size: 11.5px; color: #8B6E62; margin-top: 1px; }
+  .peer-quote {
+    font-size: 13.5px; color: #4A3C36;
+    line-height: 1.6;
+    background: #F7F3EE;
+    padding: 10px 13px;
+    border-radius: 12px;
+    margin: 6px 0 10px;
+  }
+  .peer-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12.5px;
+  }
+  .peer-like { color: #8B6E62; }
+  .peer-join { color: #A45F58; font-weight: 600; }
+
+  /* F · Data snapshot */
+  .data-strip {
+    margin: 12px 18px;
+    background: rgba(255,255,255,0.65);
+    border-radius: 18px;
+    padding: 12px 10px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+  }
+  .data-cell {
+    text-align: center;
+    padding: 4px 2px;
+  }
+  .data-val {
+    font-size: 17px; font-weight: 700; color: #2C2622;
+    line-height: 1.2;
+  }
+  .data-unit { font-size: 11px; color: #8B6E62; font-weight: 500; }
+  .data-name { font-size: 11px; color: #8B6E62; margin-top: 3px; }
+  .data-delta { font-size: 10px; margin-top: 1px; font-weight: 600; }
+  .delta-down { color: #B5783D; }
+  .delta-up { color: #B5783D; }
+  .delta-flat { color: #8B6E62; }
+
+  /* G · Rituals */
+  .rituals {
+    margin: 14px 18px;
+    padding: 16px 16px 14px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 18px;
+  }
+  .ritual-title {
+    font-weight: 700; font-size: 14px; color: #2C2622;
+    margin-bottom: 10px;
+  }
+  .ritual-item {
+    display: flex; gap: 10px; align-items: center;
+    font-size: 13px; color: #4A3C36;
+    padding: 6px 0;
+  }
+  .ritual-dot {
+    width: 6px; height: 6px; background: #C8847B; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ritual-time { color: #A45F58; font-weight: 600; }
+
+  /* H · Family hint */
+  .family-hint {
+    margin: 6px 18px 16px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.5);
+    border: 1px dashed rgba(168, 95, 88, 0.3);
+    border-radius: 14px;
+    font-size: 12.5px;
+    color: #6E5A52;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .family-hint b { color: #A45F58; font-weight: 600; }
+
+  /* Bottom tab */
+  .tab-bar {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    padding: 8px 0 24px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid rgba(0,0,0,0.04);
+  }
+  .tab {
+    text-align: center;
+    font-size: 11px;
+    color: #8B6E62;
+  }
+  .tab-icon {
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .tab.active { color: #A45F58; font-weight: 600; }
+
+  /* ────── Right-side annotation panel ────── */
+  .annotations {
+    width: 380px;
+    flex-shrink: 0;
+    padding-top: 20px;
+  }
+  .ann-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #2C2622;
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .ann-subtitle {
+    font-size: 14px;
+    color: #6E5A52;
+    margin-bottom: 22px;
+  }
+  .ann-block {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.65);
+    border-radius: 14px;
+    border-left: 3px solid #C8847B;
+  }
+  .ann-tag {
+    display: inline-block;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: white;
+    background: #C8847B;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+  }
+  .ann-heading {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #2C2622;
+    margin-bottom: 4px;
+  }
+  .ann-text {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #4A3C36;
+  }
+  .ann-text b { color: #A45F58; }
+  .ann-footer {
+    margin-top: 24px;
+    padding: 16px 18px;
+    background: #2C2622;
+    color: #F5F2EF;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .ann-footer b { color: #FFD9C8; }
+</style>
+</head>
+<body>
+
+<!-- ════════ PHONE ════════ -->
+<div class="phone">
+  <div class="island"></div>
+
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span>9:30</span>
+    <div class="status-icons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="#1A1A1A"><path d="M1 8h1.5v2H1zM4.5 5H6v5H4.5zM8 2.5h1.5V10H8zM11.5 0H13v10h-1.5z"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="#1A1A1A"><path d="M8 2.5c1.93 0 3.68.78 4.95 2.05l1.06-1.06A8.95 8.95 0 008 1a8.95 8.95 0 00-6.01 2.49l1.06 1.06A6.97 6.97 0 018 2.5zm0 3c1.1 0 2.1.44 2.83 1.17l1.06-1.06A5.97 5.97 0 008 4a5.97 5.97 0 00-3.89 1.61l1.06 1.06A4.5 4.5 0 018 5.5zm0 3a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>
+      <svg width="24" height="11" viewBox="0 0 24 11"><rect x="1" y="1" width="20" height="9" rx="2.5" stroke="#1A1A1A" stroke-width="1" fill="none"/><rect x="3" y="3" width="14" height="5" rx="1" fill="#1A1A1A"/><rect x="22" y="4" width="1.5" height="3" rx="0.5" fill="#1A1A1A"/></svg>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <div class="brand-dot">♥</div>
+      <span>健康知己</span>
+    </div>
+    <div class="bell">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+    </div>
+  </div>
+
+  <!-- B · Briefing -->
+  <div class="briefing">
+    <div class="briefing-row">
+      <div class="ip-avatar">
+        <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="bgG" cx="50%" cy="35%" r="70%">
+              <stop offset="0%" stop-color="#FFF1E4"/>
+              <stop offset="100%" stop-color="#F0C9B0"/>
+            </radialGradient>
+            <radialGradient id="skinG" cx="50%" cy="38%" r="65%">
+              <stop offset="0%" stop-color="#F4D4BA"/>
+              <stop offset="100%" stop-color="#D9B095"/>
+            </radialGradient>
+            <linearGradient id="hairG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3A2A22"/>
+              <stop offset="100%" stop-color="#241812"/>
+            </linearGradient>
+            <linearGradient id="coatG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="100%" stop-color="#EDE7DF"/>
+            </linearGradient>
+          </defs>
+          <!-- background -->
+          <rect width="120" height="120" fill="url(#bgG)"/>
+          <!-- coat (lower portion) -->
+          <path d="M14,120 Q22,96 42,90 L52,98 L60,118 L68,98 L78,90 Q98,96 106,120 Z" fill="url(#coatG)"/>
+          <!-- coat collar v -->
+          <path d="M52,98 L60,118 L68,98 L60,108 Z" fill="#E1D8CC"/>
+          <!-- accent pin (subtle medical hint) -->
+          <circle cx="48" cy="103" r="1.8" fill="#C8847B"/>
+          <!-- neck -->
+          <path d="M50,84 Q50,94 55,98 L65,98 Q70,94 70,84 Z" fill="url(#skinG)"/>
+          <!-- neck shadow -->
+          <path d="M50,84 Q50,90 60,92 Q70,90 70,84 Z" fill="#C99B82" opacity="0.4"/>
+          <!-- hair back -->
+          <path d="M28,58 Q24,80 30,92 Q35,86 38,76 Q34,68 35,58 Z" fill="url(#hairG)"/>
+          <path d="M92,58 Q96,80 90,92 Q85,86 82,76 Q86,68 85,58 Z" fill="url(#hairG)"/>
+          <!-- face -->
+          <ellipse cx="60" cy="62" rx="22" ry="27" fill="url(#skinG)"/>
+          <!-- hair top (short professional bob) -->
+          <path d="M32,60 Q26,30 60,26 Q94,30 88,60 Q88,46 82,42 Q72,36 60,36 Q48,36 38,42 Q32,46 32,60 Z" fill="url(#hairG)"/>
+          <!-- fringe -->
+          <path d="M40,52 Q50,46 60,48 Q70,46 80,52 Q70,42 60,42 Q50,42 40,52 Z" fill="url(#hairG)"/>
+          <!-- ears -->
+          <ellipse cx="38" cy="66" rx="2.5" ry="4" fill="url(#skinG)"/>
+          <ellipse cx="82" cy="66" rx="2.5" ry="4" fill="url(#skinG)"/>
+          <!-- pearl earrings -->
+          <circle cx="38" cy="71" r="1.5" fill="#F8F0E8" stroke="#D9CCBF" stroke-width="0.3"/>
+          <circle cx="82" cy="71" r="1.5" fill="#F8F0E8" stroke="#D9CCBF" stroke-width="0.3"/>
+          <!-- eyebrows -->
+          <path d="M46,58 Q51,56 56,58.5" stroke="#241812" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M64,58.5 Q69,56 74,58" stroke="#241812" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <!-- glasses frames -->
+          <circle cx="51" cy="64" r="7" stroke="#4A3C36" stroke-width="1" fill="rgba(255,255,255,0.06)"/>
+          <circle cx="69" cy="64" r="7" stroke="#4A3C36" stroke-width="1" fill="rgba(255,255,255,0.06)"/>
+          <line x1="58" y1="64" x2="62" y2="64" stroke="#4A3C36" stroke-width="1"/>
+          <line x1="44" y1="63" x2="40" y2="64" stroke="#4A3C36" stroke-width="0.8"/>
+          <line x1="76" y1="63" x2="80" y2="64" stroke="#4A3C36" stroke-width="0.8"/>
+          <!-- eyes -->
+          <ellipse cx="51" cy="64.5" rx="2" ry="2.2" fill="#1A0E08"/>
+          <ellipse cx="69" cy="64.5" rx="2" ry="2.2" fill="#1A0E08"/>
+          <circle cx="52" cy="63.5" r="0.7" fill="white"/>
+          <circle cx="70" cy="63.5" r="0.7" fill="white"/>
+          <!-- nose -->
+          <path d="M60,69 Q58,75 60,77 Q62,75 60,77" stroke="#C99B82" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+          <ellipse cx="58.5" cy="76.5" rx="0.8" ry="0.5" fill="#C99B82" opacity="0.6"/>
+          <ellipse cx="61.5" cy="76.5" rx="0.8" ry="0.5" fill="#C99B82" opacity="0.6"/>
+          <!-- subtle smile -->
+          <path d="M52,82 Q60,86 68,82" stroke="#9C5450" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+          <!-- lip color -->
+          <path d="M54,82 Q60,84 66,82 Q60,83 54,82 Z" fill="#B86E69" opacity="0.45"/>
+          <!-- cheek blush -->
+          <ellipse cx="44" cy="76" rx="4" ry="2.5" fill="#E8A398" opacity="0.25"/>
+          <ellipse cx="76" cy="76" rx="4" ry="2.5" fill="#E8A398" opacity="0.25"/>
+          <!-- subtle laugh line (age hint, 50+ trustworthy) -->
+          <path d="M50,79 Q49,82 50,84" stroke="#C99B82" stroke-width="0.5" fill="none" opacity="0.5"/>
+          <path d="M70,79 Q71,82 70,84" stroke="#C99B82" stroke-width="0.5" fill="none" opacity="0.5"/>
+        </svg>
+        <div class="ip-badge">●</div>
+        <div class="ip-placeholder-note">占位 · 待替换</div>
+      </div>
+      <div class="ip-meta">
+        <div class="ip-title">李医生 · 你的健康知己</div>
+        <div class="ip-headline">早安,今天我录了 3 分钟,</div>
+        <div class="ip-quote">关于你昨晚 3 点的那次醒来——</div>
+      </div>
+    </div>
+    <div class="audio-player">
+      <div class="play-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <div class="audio-wave">
+        <i style="height:5px"></i><i style="height:10px"></i><i style="height:16px"></i><i style="height:22px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:20px"></i><i style="height:13px"></i><i style="height:7px"></i><i style="height:11px"></i><i style="height:16px"></i><i style="height:9px"></i><i style="height:6px"></i><i style="height:13px"></i><i style="height:18px"></i><i style="height:11px"></i><i style="height:5px"></i><i style="height:9px"></i><i style="height:14px"></i><i style="height:11px"></i><i style="height:7px"></i><i style="height:5px"></i><i style="height:9px"></i><i style="height:6px"></i><i style="height:11px"></i><i style="height:14px"></i><i style="height:8px"></i><i style="height:5px"></i>
+      </div>
+      <div class="audio-time">3:24</div>
+    </div>
+  </div>
+
+  <!-- C · Today state -->
+  <div class="card" style="margin-top: 4px;">
+    <div class="section-label" style="padding-bottom: 12px;">
+      <div class="section-title">今日身体状态</div>
+      <div class="phase-pill">围绝经活跃期 · 第 23 天</div>
+    </div>
+    <div class="four-dims">
+      <div class="dim-cell">
+        <div class="dim-name">雌激素</div>
+        <div class="dim-status status-attention">关注</div>
+      </div>
+      <div class="dim-cell">
+        <div class="dim-name">睡眠</div>
+        <div class="dim-status status-attention">关注</div>
+      </div>
+      <div class="dim-cell">
+        <div class="dim-name">情绪</div>
+        <div class="dim-status status-stable">平稳</div>
+      </div>
+      <div class="dim-cell">
+        <div class="dim-name">代谢</div>
+        <div class="dim-status status-stable">平稳</div>
+      </div>
+    </div>
+    <div class="attribution">昨晚 3 点醒来是早期围绝经的典型 "夜间觉醒"。E2 偏低 + 凌晨皮质醇上升,把昨晚的事说清楚了。”</div>
+  </div>
+
+  <!-- D · One thing -->
+  <div class="one-thing">
+    <div class="ot-header">今天的一件事</div>
+    <div class="ot-title">🌙 23:30 前躺下</div>
+    <div class="ot-context"><b>李医生:</b>这周陪你 7 天。每晚 23:00 我会提醒你。睡眠这条线稳定下来,雌激素波动会跟着缓和。</div>
+    <div class="ot-cta">接受陪伴 →</div>
+  </div>
+
+  <!-- E · Peer -->
+  <div class="peer-card">
+    <div class="section-label" style="padding: 0 0 8px;">
+      <div class="section-title" style="font-size: 14.5px;">同行人时刻</div>
+      <div class="section-sub">和你一样在围绝经活跃期的姐姐</div>
+    </div>
+    <div class="peer-head">
+      <div class="peer-avatar">王</div>
+      <div>
+        <div class="peer-name">王姐</div>
+        <div class="peer-meta">49 岁 · 同行第 45 天</div>
+      </div>
+    </div>
+    <div class="peer-quote">我也是凌晨 3 点醒来三周了,跟李医生的 23:30 习惯走了 4 周,这周开始能睡到 5 点了。</div>
+    <div class="peer-actions">
+      <span class="peer-like">♡ 12</span>
+      <span class="peer-join">加入她的小群 →</span>
+    </div>
+  </div>
+
+  <!-- F · Data -->
+  <div class="data-strip">
+    <div class="data-cell">
+      <div class="data-val">5.1<span class="data-unit">h</span></div>
+      <div class="data-name">睡眠</div>
+      <div class="data-delta delta-down">↓ 57min</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-val">38</div>
+      <div class="data-name">HRV</div>
+      <div class="data-delta delta-down">↓ 5</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-val">2<span class="data-unit"> 次</span></div>
+      <div class="data-name">潮热</div>
+      <div class="data-delta delta-up">+1</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-val" style="font-size: 16px;">偏低</div>
+      <div class="data-name">心情</div>
+      <div class="data-delta delta-flat">—</div>
+    </div>
+  </div>
+
+  <!-- G · Rituals -->
+  <div class="rituals">
+    <div class="ritual-title">本周仪式</div>
+    <div class="ritual-item">
+      <div class="ritual-dot"></div>
+      <span class="ritual-time">周三 20:00</span>
+      <span>李医生入群答疑</span>
+    </div>
+    <div class="ritual-item">
+      <div class="ritual-dot"></div>
+      <span class="ritual-time">周日 21:00</span>
+      <span>你的第 4 周复盘上线</span>
+    </div>
+  </div>
+
+  <!-- H · Family -->
+  <div class="family-hint">
+    <span>📔 也为<b>妈妈/老公/女儿</b>开一个健康知己档案</span>
+    <span style="color: #A45F58;">→</span>
+  </div>
+
+  <!-- Bottom tab -->
+  <div class="tab-bar">
+    <div class="tab active">
+      <div class="tab-icon">💝</div>
+      <div>健康</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon">📅</div>
+      <div>节律</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon">📖</div>
+      <div>故事</div>
+    </div>
+    <div class="tab">
+      <div class="tab-icon">📔</div>
+      <div>档案</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ ANNOTATIONS ════════ -->
+<div class="annotations">
+  <div class="ann-title">围绝经主权 · 首屏 V1</div>
+  <div class="ann-subtitle">35-55 高净值女性灯塔 · 健康知己 App 改造原型</div>
+
+  <div class="ann-block">
+    <div class="ann-tag">B · 灵魂区</div>
+    <div class="ann-heading">医学 IP 音频简报</div>
+    <div class="ann-text">真人女性医师头像 + 名字 + 3 分钟个性化音频。<b>不是喜猫吉祥物</b>,信任锚必须是人。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">C · 状态命名</div>
+    <div class="ann-heading">围绝经四维 + 阶段 + 穿越天数</div>
+    <div class="ann-text">删除六维通用雷达。改为雌激素 / 睡眠 / 情绪 / 代谢 四维,配 <b>"围绝经活跃期·第 23 天"</b> 的医学命名。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">D · 唯一行动</div>
+    <div class="ann-heading">今天的一件事(不是 5 件)</div>
+    <div class="ann-text">替代马尧的"本周 4 次 30 分钟运动 + 4 项 AI 建议"。<b>医学 IP 第一人称 + "陪你 7 天"承诺</b> = 关系货币载体。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">E · 第二信任锚</div>
+    <div class="ann-heading">同行人时刻</div>
+    <div class="ann-text">同年龄 ±3 岁 + 同阶段 + 同症状的姐姐故事。<b>入群入口</b>是 20 人小群,医学 IP 入群答疑。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">F · 数据收敛</div>
+    <div class="ann-heading">4 张围绝经关键 (非 8 张通用)</div>
+    <div class="ann-text">睡眠 / HRV / 潮热 / 心情。<b>删除</b>步数/BMI/活动能量/步跑距离 — 对围绝经女性是无效指标。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">G · 仪式 ≠ 任务</div>
+    <div class="ann-heading">本周仪式</div>
+    <div class="ann-text">有时间锚 + 集体感 + 期待感。<b>不是打卡任务</b>,是身份认同载体。</div>
+  </div>
+
+  <div class="ann-block">
+    <div class="ann-tag">H · 拉新乘数</div>
+    <div class="ann-heading">家庭账户暗线</div>
+    <div class="ann-text"><b>不弹窗</b>,埋一行小字。点击 → 三代健康账户(本人+老公+父母+子女)。这是 1.5-3 倍拉新乘数的入口。</div>
+  </div>
+
+  <div class="ann-footer">
+    <b>核心战略指令</b><br><br>
+    马尧健康现状每个区块都在说"我是健康追踪工具"。这版每个区块都在说<b>"我是陪你穿越围绝经的健康知己"</b>。<br><br>
+    差的不是 UI,是产品的灵魂。
+  </div>
+</div>
+
+</body>
+</html>

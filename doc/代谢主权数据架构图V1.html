@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>代谢主权 · 0→0.1 数据架构图 V1</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+  :root{
+    --bg:#0B0E14;--card:#161B26;--card2:#1C2330;--line:#2A3344;
+    --txt:#FFFFFF;--txt2:#9AA3B5;--txt3:#5A6373;
+    --acc:#34E5B0;--acc2:#2BA88A;--amber:#F5B544;--blue:#5B8DEF;--purple:#A78BFA;
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(1100px 700px at 50% -8%,#11202a 0%,#0B0E14 55%);color:var(--txt);padding:44px 30px 60px;}
+  .wrap{max-width:1200px;margin:0 auto;}
+  .title{text-align:center;margin-bottom:8px;}
+  .title h1{font-size:28px;font-weight:800;background:linear-gradient(90deg,#fff,#34E5B0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .title p{color:var(--txt2);font-size:13.5px;margin-top:9px;line-height:1.6;}
+  .title .core{color:var(--acc);font-weight:600;}
+
+  .layer{display:flex;gap:18px;align-items:stretch;margin:0 auto;position:relative;}
+  .lname{width:120px;flex-shrink:0;display:flex;flex-direction:column;justify-content:center;align-items:flex-end;text-align:right;padding-right:4px;}
+  .lname .ln{font-size:15px;font-weight:800;}
+  .lname .le{font-size:10.5px;color:var(--txt3);margin-top:3px;letter-spacing:.5px;}
+  .lbody{flex:1;border-radius:18px;padding:16px 18px;border:1px solid var(--line);background:var(--card);}
+  .lbody.tinted{background:linear-gradient(150deg,#16322b,#161B26);border-color:#27604f;}
+  .lrow{display:flex;gap:12px;flex-wrap:wrap;}
+  .mod{flex:1;min-width:135px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;}
+  .mod .mh{font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:6px;}
+  .mod .md{font-size:10.5px;color:var(--txt2);margin-top:5px;line-height:1.5;}
+  .ic{font-size:15px;}
+
+  .badge{display:inline-block;font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle;}
+  .b-out{background:rgba(245,181,68,.13);color:var(--amber);border:1px solid #5a4a22;}
+  .b-core{background:rgba(52,229,176,.14);color:var(--acc);border:1px solid #2c5a4c;}
+  .b-future{background:rgba(167,139,250,.13);color:var(--purple);border:1px solid #4a3f6b;}
+
+  .arrow{display:flex;justify-content:center;align-items:center;height:34px;color:var(--acc2);font-size:20px;margin-left:120px;}
+  .arrow .lbl{font-size:10px;color:var(--txt3);margin-left:8px;}
+
+  .layhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
+  .layhead .lt{font-size:11px;color:var(--txt3);font-weight:700;letter-spacing:1px;}
+
+  /* feedback split */
+  .fb{display:flex;gap:12px;}
+  .fb .col{flex:1;border-radius:12px;padding:11px 13px;border:1px solid var(--line);}
+  .fb .hi{background:rgba(52,229,176,.06);border-color:#235044;}
+  .fb .lo{background:rgba(91,141,239,.06);border-color:#2f4470;}
+  .fb .ct{font-size:11.5px;font-weight:700;margin-bottom:6px;}
+  .fb .hi .ct{color:var(--acc);} .fb .lo .ct{color:var(--blue);}
+  .fb .ci{font-size:10.5px;color:var(--txt2);line-height:1.55;}
+
+  /* loop */
+  .loop{margin:22px auto 0;background:var(--card);border:1px dashed #34506a;border-radius:16px;padding:16px 20px;display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap;}
+  .loop .step{font-size:12px;font-weight:700;color:#dfe5ef;}
+  .loop .sep{color:var(--acc);font-size:14px;}
+  .loop .fly{color:var(--acc);font-size:11px;font-weight:700;margin-left:6px;}
+
+  .judg{margin-top:26px;border-top:1px solid var(--line);padding-top:20px;}
+  .judg h3{font-size:15px;margin-bottom:14px;color:#fff;}
+  .jgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+  .jcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;}
+  .jcard .jt{font-size:12.5px;font-weight:700;margin-bottom:7px;}
+  .jcard.j1 .jt{color:var(--amber);} .jcard.j2 .jt{color:var(--acc);} .jcard.j3 .jt{color:var(--purple);}
+  .jcard .jd{font-size:11px;color:var(--txt2);line-height:1.6;}
+  .legend{display:flex;gap:20px;justify-content:center;margin-top:20px;font-size:10.5px;color:var(--txt3);flex-wrap:wrap;}
+  .legend span{display:flex;align-items:center;gap:6px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="title">
+    <h1>代谢主权 · 0→0.1 数据架构</h1>
+    <p>核心判断:<span class="core">采集外包给厂商,小程序只做「聚合 + 归因 + 反馈」</span>。不自采 CGM、不做硬件、不碰器械合规。<br>2 人团队的数据管道边界 — 黄标=外包不自建 · 绿标=护城河核心 · 紫标=0.1→1 预留</p>
+  </div>
+
+  <!-- L1 采集层 -->
+  <div class="layer">
+    <div class="lname"><div class="ln">① 采集层</div><div class="le">DATA SOURCE</div></div>
+    <div class="lbody">
+      <div class="layhead"><span class="lt">数据从哪来</span><span class="badge b-out">外包 · 不自建采集</span></div>
+      <div class="lrow">
+        <div class="mod"><div class="mh"><span class="ic">🩸</span>CGM 动态血糖</div><div class="md">硅基/微泰传感器 → 厂商自带 App 后台采集(14天不间断)</div></div>
+        <div class="mod"><div class="mh"><span class="ic">⚖️</span>体重/体脂秤</div><div class="md">蓝牙 BLE,每日晨称自动上报</div></div>
+        <div class="mod"><div class="mh"><span class="ic">🏃</span>运动/睡眠</div><div class="md">微信运动 + 手动补录</div></div>
+        <div class="mod"><div class="mh"><span class="ic">📄</span>体检报告</div><div class="md">拍照上传,8周硬指标</div></div>
+        <div class="mod"><div class="mh"><span class="ic">🗣️</span>用户输入</div><div class="md">一句话饮食(语音/拍照)、打卡、主观自评</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">↓<span class="lbl">采集设备的数据,通过各自通道进入</span></div>
+
+  <!-- L2 接入层 -->
+  <div class="layer">
+    <div class="lname"><div class="ln">② 接入层</div><div class="le">SYNC / INGEST</div></div>
+    <div class="lbody">
+      <div class="layhead"><span class="lt">数据怎么进来</span><span class="badge b-out">用现成通道,不自研协议</span></div>
+      <div class="lrow">
+        <div class="mod"><div class="mh"><span class="ic">⟲</span>糖动 API</div><div class="md">CGM 血糖数据同步 · <b style="color:var(--amber)">命门:需商务对接</b></div></div>
+        <div class="mod"><div class="mh"><span class="ic">📶</span>小程序 BLE</div><div class="md">体重秤等蓝牙设备直连</div></div>
+        <div class="mod"><div class="mh"><span class="ic">🔍</span>OCR 提取</div><div class="md">体检报告拍照 → AI 提取关键指标</div></div>
+        <div class="mod"><div class="mh"><span class="ic">📝</span>小程序表单</div><div class="md">手动录入(血压/饮食)兜底</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="arrow">↓<span class="lbl">统一清洗、对齐时间戳、归一化</span></div>
+
+  <!-- L3 数据底座 -->
+  <div class="layer">
+    <div class="lname"><div class="ln">③ 数据底座</div><div class="le">DATA FOUNDATION</div></div>
+    <div class="lbody">
+      <div class="layhead"><span class="lt">统一健康档案(时序)</span><span class="badge b-future">预留双性别/家庭账户</span></div>
+      <div class="fb">
+        <div class="col hi"><div class="ct">高频流(每日/实时)</div><div class="ci">CGM 血糖曲线/TIR · 体重 · 步数/睡眠 · 饮食 · 打卡行为</div></div>
+        <div class="col lo"><div class="ct">低频硬指标(8周)</div><div class="ci">HOMA-IR · ApoB · HbA1c · 肝脂肪 · 内脏脂肪</div></div>
+      </div>
+      <div style="font-size:10.5px;color:var(--purple);margin-top:11px;line-height:1.5;">⚠ 架构铁律:性别字段中性化、账户结构预留"家庭成员",绝不把"男性/代谢"写死成系统核心轴 — 否则 0.1→1 接女性灯塔(围绝经)要重做。</div>
+    </div>
+  </div>
+  <div class="arrow">↓<span class="lbl">数据喂给智能层做归因</span></div>
+
+  <!-- L4 智能层 -->
+  <div class="layer">
+    <div class="lname"><div class="ln">④ 智能层</div><div class="le">AI / REASONING</div></div>
+    <div class="lbody tinted">
+      <div class="layhead"><span class="lt">健康参谋 · 归因引擎</span><span class="badge b-core">护城河核心 · AI 不可替代价值</span></div>
+      <div class="lrow">
+        <div class="mod"><div class="mh"><span class="ic">🎯</span>时间对齐归因</div><div class="md">血糖波动 ↔ 前1-2h具体行为("那杯燕麦拿铁→9.8")</div></div>
+        <div class="mod"><div class="mh"><span class="ic">🧭</span>方向校准</div><div class="md">不督促努力,告诉他"努力对不对"(化解高自律悖论)</div></div>
+        <div class="mod"><div class="mh"><span class="ic">📌</span>今日唯一动作</div><div class="md">基于昨日数据,生成1个可执行可打卡动作</div></div>
+        <div class="mod"><div class="mh"><span class="ic">📰</span>周报生成</div><div class="md">做对了什么/偏了什么/下周ONE THING</div></div>
+      </div>
+      <div style="font-size:10.5px;color:var(--acc2);margin-top:11px;line-height:1.5;">引擎 = 大模型 API + 校准话术 SOP + <b style="color:var(--acc)">你本人每周质检沉淀的归因规则</b>(0→0.1 人工兜底 → 0.1→1 固化为可规模化 SOP)</div>
+    </div>
+  </div>
+  <div class="arrow">↓<span class="lbl">归因结果呈现给用户 · 双层反馈</span></div>
+
+  <!-- L5 呈现层 -->
+  <div class="layer">
+    <div class="lname"><div class="ln">⑤ 呈现层</div><div class="le">APP / FEEDBACK</div></div>
+    <div class="lbody">
+      <div class="layhead"><span class="lt">微信小程序 · 5 屏</span><span class="badge b-core">双层反馈 = 留存引擎</span></div>
+      <div class="lrow">
+        <div class="mod"><div class="mh">◉ 今日</div><div class="md">状态环+参谋寄语+今日动作+实时血糖</div></div>
+        <div class="mod"><div class="mh">◆ 参谋</div><div class="md">归因+校准对话</div></div>
+        <div class="mod"><div class="mh">📈 趋势</div><div class="md">高频曲线+依从热力+硬指标</div></div>
+        <div class="mod"><div class="mh">🔗 数据</div><div class="md">糖动同步+数据源状态</div></div>
+        <div class="mod"><div class="mh">☰ 周报</div><div class="md">方向校准报告</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- closed loop -->
+  <div class="loop">
+    <span class="step">反馈</span><span class="sep">→</span>
+    <span class="step">用户行为改变</span><span class="sep">→</span>
+    <span class="step">产生新数据</span><span class="sep">→</span>
+    <span class="step">归因更准</span><span class="sep">→</span>
+    <span class="step">反馈更个性化</span>
+    <span class="fly">⟲ 数据飞轮:用得越久,越懂你,越离不开 = 护城河来源</span>
+  </div>
+
+  <!-- key judgments -->
+  <div class="judg">
+    <h3>三条架构判断(决定 2 人团队不踩坑)</h3>
+    <div class="jgrid">
+      <div class="jcard j1"><div class="jt">① 采集层全外包</div><div class="jd">CGM/硬件/器械合规都不碰,交给厂商 App + 糖动。自研采集是 0→0.1 自杀。小程序的活只从"接入层"开始。</div></div>
+      <div class="jcard j2"><div class="jt">② 价值集中在智能层</div><div class="jd">护城河不在采集(谁都能买CGM),在归因(把数据翻译成"你该怎么做")+ 纵向数据沉淀。大力投这一层。</div></div>
+      <div class="jcard j3"><div class="jt">③ 底座预留双灯塔</div><div class="jd">数据底座现在就按"双性别+家庭账户"设计,代价≈0;0.1→1 经家庭账户接女性灯塔(围绝经),双灯塔自然合流。</div></div>
+    </div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--amber);"></i>外包 · 不自建</span>
+      <span><i class="dot" style="background:var(--acc);"></i>护城河核心 · 大力投</span>
+      <span><i class="dot" style="background:var(--purple);"></i>0.1→1 规模化预留</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
